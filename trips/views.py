@@ -10,19 +10,16 @@ class TripViewset(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
     def create(self, request):
-        new_trip = Trip.objects.create(
-        	title=request.data['title'],
-        	description=request.data['description'],
-        	user_id=1
-        )
-        return Response(new_trip, status=status.HTTP_201_CREATED)
+        serializer = TripSerializer(data=request.data)
+        if serializer.is_valid():
+        	serializer.create(serializer.validated_data)
+        	return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
 class MediaViewset(viewsets.ModelViewSet):
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
-
     def create(self, request):
         new_media = Media.objects.create(
         	url=request.data['url'],
@@ -35,7 +32,6 @@ class MediaViewset(viewsets.ModelViewSet):
 class PlaceViewset(viewsets.ModelViewSet):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
-
     def create(self, request):
         new_media = Media.objects.create(
         	label=request.data['label'],
