@@ -4,11 +4,13 @@ from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 
 class TripSerializer(serializers.ModelSerializer):
+	user = serializers.HiddenField(
+    	default=serializers.CurrentUserDefault()
+	)
 	class Meta:
 		model = Trip
 		fields = ('title', 'description', 'user', 'places')
 		depth = 1
-
 
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:

@@ -127,6 +127,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': timedelta(days=10)
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 

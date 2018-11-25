@@ -5,15 +5,20 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
+from trips.permissions import IsTripOwner
+from rest_framework import permissions
+
 
 class TripViewset(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+    permission_classes = (permissions.IsAuthenticated, IsTripOwner)
     def create(self, request):
-        serializer = TripSerializer(data=request.data)
+        request.data["user_id"] = request.user.id
+        serializer = TripSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-        	serializer.create(serializer.validated_data)
-        	return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer.create(serializer.validated_data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
