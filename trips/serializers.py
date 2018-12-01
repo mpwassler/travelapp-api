@@ -9,7 +9,7 @@ class TripSerializer(serializers.ModelSerializer):
 	)
 	class Meta:
 		model = Trip
-		fields = ('title', 'description', 'user', 'places')
+		fields = ( 'id', 'title', 'description', 'user', 'places', 'user_id')
 		depth = 1
 
 class UserSerializer(serializers.ModelSerializer):

@@ -10,21 +10,27 @@ from rest_framework import permissions
 
 
 class TripViewset(viewsets.ModelViewSet):
-    queryset = Trip.objects.all()
+
     serializer_class = TripSerializer
     permission_classes = (permissions.IsAuthenticated, IsTripOwner)
-    def create(self, request):
-        request.data["user_id"] = request.user.id
-        serializer = TripSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.create(serializer.validated_data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    queryset = Trip.objects.all()
+
+    def get_queryset(self):
+        queryset = Trip.objects.filter(user_id=self.request.user.id)
+        return queryset
+
+    # def create(self, request):
+    #     serializer = TripSerializer(data=request.data, context={'request': request})
+    #     if serializer.is_valid():
+    #         serializer.create(serializer.validated_data)
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
 class MediaViewset(viewsets.ModelViewSet):
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
+    permission_classes = (permissions.IsAuthenticated)
     def create(self, request):
         new_media = Media.objects.create(
         	url=request.data['url'],
@@ -37,6 +43,7 @@ class MediaViewset(viewsets.ModelViewSet):
 class PlaceViewset(viewsets.ModelViewSet):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
+    permission_classes = (permissions.IsAuthenticated)
     def create(self, request):
         new_media = Media.objects.create(
         	label=request.data['label'],

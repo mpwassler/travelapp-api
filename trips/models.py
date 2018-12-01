@@ -13,7 +13,7 @@ class Entity(models.Model):
 
 class Trip(models.Model):
 	title = models.CharField(max_length=100)
-	description = models.TextField()
+	description = models.TextField(blank=True)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
 	created_at = models.DateField(default=timezone.now)
