@@ -20,19 +20,15 @@ class Trip(models.Model):
 	updated_at = AutoDateTimeField(default=timezone.now)
 
 class Place(models.Model):
-	label = models.TextField()
+	label = models.TextField(blank=True)
+	description = models.TextField(blank=True)
 	date = models.DateTimeField()
 	location = models.PointField()
 	trip = models.ForeignKey(Trip, related_name='places', on_delete=models.CASCADE)
-	created_at = models.DateField(default=timezone.now)
-	updated_at = AutoDateTimeField(default=timezone.now)
-
-class Media(models.Model):
-	url = models.CharField(max_length=560)
-	size = models.CharField(max_length=360)
-	type = models.CharField(max_length=360)
+	media_url = models.CharField(max_length=560)
+	media_key = models.CharField(max_length=560, blank=True)
+	media_type = models.CharField(max_length=360)
 	entity = models.ForeignKey(Entity, on_delete=models.CASCADE)
-	place = models.ForeignKey(Place, on_delete=models.CASCADE)
 	created_at = models.DateField(default=timezone.now)
 	updated_at = AutoDateTimeField(default=timezone.now)
 
@@ -54,4 +50,4 @@ def create_entity_id(sender, instance, **kwargs):
 		instance.entity_id = entity.pk
 
 models.signals.pre_save.connect(create_entity_id, sender=Trip)
-models.signals.pre_save.connect(create_entity_id, sender=Media)
+models.signals.pre_save.connect(create_entity_id, sender=Place)

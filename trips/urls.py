@@ -8,8 +8,10 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'trips', views.TripViewset)
 
+
 trips_router = routers.NestedDefaultRouter(router, r'trips', lookup='trips')
 trips_router.register(r'places', views.PlaceViewset)
+
 
 router.register(r'users', views.UserViewset)
 

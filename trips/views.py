@@ -1,12 +1,15 @@
 from django.contrib.auth.models import User
-from .models import Trip, Media, Place
-from .serializers import TripSerializer, UserSerializer, MediaSerializer, PlaceSerializer
+from .models import Trip, Place
+from .serializers import TripSerializer, UserSerializer, PlaceSerializer
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework import status
 from trips.permissions import IsTripOwner
 from rest_framework import permissions
+from rest_framework.decorators import action
+from django.conf import settings
+import boto3
 
 
 class TripViewset(viewsets.ModelViewSet):
@@ -27,30 +30,35 @@ class TripViewset(viewsets.ModelViewSet):
 
 
 
-class MediaViewset(viewsets.ModelViewSet):
-    queryset = Media.objects.all()
-    serializer_class = MediaSerializer
-    permission_classes = (permissions.IsAuthenticated)
-    def create(self, request):
-        new_media = Media.objects.create(
-        	url=request.data['url'],
-        	size=request.data['size'],
-        	type=request.data['type'],
-        	trip_id=1
-        )
-        return Response({}, status=status.HTTP_201_CREATED)
+# class MediaViewset(viewsets.ModelViewSet):
+#     queryset = Media.objects.all()
+#     serializer_class = MediaSerializer
+#     # permission_classes = (permissions.IsAuthenticated,)
+
+
+
 
 class PlaceViewset(viewsets.ModelViewSet):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
     permission_classes = (permissions.IsAuthenticated)
-    def create(self, request):
-        new_media = Media.objects.create(
-        	label=request.data['label'],
-        	date=request.data['date'],
-        	trip_id=1
+    @action(detail=False, methods=['post'])
+    def get_upload_url(self, request, pk=None, **kwargs):
+        s3 = boto3.client('s3')
+        fields = {"acl": "public-read"}
+        conditions = [
+            {"acl": "public-read"}
+        ]
+        post = s3.generate_presigned_post(
+            Bucket=settings.AWS_BUCKET,
+            Key=settings.AWS_ACCESS_KEY_ID,
+            Fields=fields,
+            Conditions=conditions
         )
-        return Response({}, status=status.HTTP_201_CREATED)
+        if True:
+            return Response({'status': post})
+        else:
+            return Response({'error': 'error'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewset(viewsets.ModelViewSet):

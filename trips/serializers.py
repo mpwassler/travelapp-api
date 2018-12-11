@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Trip, Media, Place
+from .models import Trip, Place
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 
@@ -18,11 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
 		fields = ('username', 'email')
 		depth = 1
 
-class MediaSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Media
-		fields = ('url', 'size', 'type', 'entity', 'place')
-		depth = 1
+# class MediaSerializer(serializers.ModelSerializer):
+# 	class Meta:
+# 		model = Media
+# 		fields = ('url', 'size', 'type', 'entity', 'place')
+# 		depth = 1
 
 class PlaceSerializer(serializers.ModelSerializer):
 	class Meta:
